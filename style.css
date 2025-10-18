@@ -1,0 +1,231 @@
+@import url('https://fonts.googleapis.com/css2?family=Varela+Round&display=swap');
+
+/* --- גלובלי --- */
+body {
+    font-family: 'Varela Round', sans-serif;
+    background-color: #f4f7f6;
+    color: #333;
+    line-height: 1.7;
+    margin: 0;
+    padding: 0;
+    direction: rtl; /* כיוון קריאה מימין לשמאל */
+    text-align: right;
+}
+
+.container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* --- כותרת עליונה (Header) --- */
+header {
+    background-color: #004d40; /* ירוק כהה, צבע יסודי לשפה הערבית */
+    color: white;
+    padding: 25px 0;
+    text-align: center;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+header h1 {
+    margin: 0;
+    font-size: 2.5em;
+}
+
+header p {
+    margin: 5px 0 0;
+    font-size: 1.1em;
+}
+
+/* --- מודולים ואזורי תוכן --- */
+main {
+    padding-top: 30px;
+    padding-bottom: 50px;
+}
+
+.lesson-module {
+    background-color: #fff;
+    padding: 30px;
+    margin-bottom: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    border-right: 5px solid #004d40;
+}
+
+.lesson-module h2 {
+    color: #00796b;
+    border-bottom: 2px solid #b2dfdb;
+    padding-bottom: 10px;
+    margin-top: 0;
+    font-size: 1.8em;
+}
+
+.module-intro {
+    font-size: 1.1em;
+    color: #555;
+    margin-bottom: 20px;
+}
+
+hr {
+    border: 0;
+    border-top: 1px dashed #ccc;
+    margin: 40px 0;
+}
+
+/* --- סטייל כפתורים --- */
+.primary-btn, .secondary-btn {
+    padding: 10px 18px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 1em;
+    transition: background-color 0.3s, transform 0.1s;
+}
+
+.primary-btn {
+    background-color: #ffb300; /* צהוב/כתום חם */
+    color: #333;
+    margin-left: 10px;
+}
+
+.primary-btn:hover {
+    background-color: #ff8f00;
+    transform: translateY(-1px);
+}
+
+.secondary-btn {
+    background-color: #e0e0e0;
+    color: #555;
+}
+
+.secondary-btn:hover {
+    background-color: #ccc;
+}
+
+/* --- סקשן אותיות מודגשות --- */
+.letters-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(70px, 1fr));
+    gap: 15px;
+    margin-top: 20px;
+    text-align: center;
+}
+
+.letter-card {
+    background-color: #26a69a; /* טורקיז */
+    color: white;
+    font-size: 40px;
+    padding: 15px 0;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s;
+}
+
+.letter-card:hover {
+    background-color: #00897b;
+}
+
+.details-box {
+    margin-top: 20px;
+    padding: 15px;
+    background-color: #e0f2f1; /* רקע בהיר לפרטים */
+    border-radius: 6px;
+    border: 1px solid #b2dfdb;
+    min-height: 40px;
+    font-size: 1.2em;
+    color: #004d40;
+}
+
+/* --- סקשן תרגול משפטים --- */
+.exercise-controls {
+    margin-bottom: 20px;
+}
+
+.sentence-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 18px;
+    margin-bottom: 12px;
+    background-color: #f7f7f7;
+    border-radius: 8px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+}
+
+.sentence-item:nth-child(even) {
+    background-color: #f1f1f1;
+}
+
+.question-text, .answer-text {
+    flex-basis: 48%;
+}
+
+.arabic-line {
+    font-size: 22px;
+    font-weight: bold;
+    color: #d84315; /* כתום-אדום לשפה הערבית */
+}
+
+.translation-line {
+    font-size: 15px;
+    color: #666;
+    margin-top: 5px;
+    transition: all 0.5s ease-out;
+    max-height: 50px;
+    overflow: hidden;
+}
+
+.translation-line.hidden {
+    max-height: 0;
+    opacity: 0;
+    margin: 0;
+    padding: 0;
+}
+
+/* --- סקשן חידון --- */
+.quiz-question {
+    background-color: #e8f5e9;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    border-left: 5px solid #4caf50;
+}
+
+.quiz-question p {
+    font-size: 1.3em;
+    font-weight: bold;
+    color: #1b5e20;
+    margin-bottom: 15px;
+}
+
+.option-label {
+    display: block;
+    background-color: #ffffff;
+    padding: 10px;
+    margin-bottom: 8px;
+    border-radius: 4px;
+    cursor: pointer;
+    border: 1px solid #ccc;
+    transition: background-color 0.2s;
+}
+
+.option-label:hover {
+    background-color: #f0f0f0;
+}
+
+/* --- רגל עמוד (Footer) --- */
+footer {
+    text-align: center;
+    padding: 15px 0;
+    background-color: #004d40;
+    color: #b2dfdb;
+    font-size: 0.9em;
+    margin-top: 30px;
+}
+
+.hidden {
+    display: none;
+}
