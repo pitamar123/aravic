@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>מדרשת ערבית: מיקוד מלא לבחינה</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Varela+Round&display=swap');
+
+        /* --- גלובלי --- */
+        body {
+            font-family: 'Varela Round', sans-serif;
+            background-color: #f4f7f6;
+            color: #333;
+            line-height: 1.7;
+            margin: 0;
+            padding: 0;
+            direction: rtl; 
+            text-align: right;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 15px; /* הופחת הריפוד לצדדים בטלפון */
+        }
+
+        /* --- מודולים ואזורי תוכן --- */
+        .lesson-module {
+            background-color: #fff;
+            padding: 20px; /* הופחת הריפוד הפנימי בטלפון */
+            margin-bottom: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            border-right: 5px solid #3f51b5;
+        }
+
+        .controls {
+            margin-bottom: 20px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap; /* מאפשר לכפתורים לעבור שורה בטלפון */
+        }
+
+        /* --- מודול 1: כרטיסיות (Flashcards) --- */
+        
+        /* ודא שהאזורים מכילים את התוכן בכל מחיר */
+        #vocab-list, #match-game-area, #quiz-area, #summary-area {
+            min-height: 50px !important; 
+        }
+
+        .vocab-grid {
+            display: grid;
+            /* שינוי: הגדרת טור אחד מינימלי למסכים קטנים, עדיין מאפשר שני טורים ברוחב 400px ומעלה */
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); 
+            gap: 10px; 
+            margin-top: 15px;
+        }
+
+        .flashcard {
+            background-color: #e8eaf6; 
+            border: 1px solid #c5cae9;
+            border-radius: 8px;
+            padding: 15px 8px; /* ריפוד מופחת לטלפון */
+            min-height: 80px;
+            display: flex !important; /* ודא תצוגה תקינה */
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .flashcard-arabic {
+            font-size: 26px; /* גודל מופחת לטלפון */
+            font-weight: bold;
+        }
+
+        /* --- מודול 2: משחק התאמה (Matching Game) --- */
+        #match-game-area {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); /* 2-3 כרטיסים ברוחב בטלפון */
+            gap: 8px;
+        }
+        
+        /* --- מודול 3: חידון רב ברירה (Quiz) --- */
+        .quiz-arabic-word {
+            font-size: 28px; /* גודל מופחת לטלפון */
+        }
+
+        /* --- כל שאר ה-CSS נשאר זהה לתיקון האחרון, רק עם התאמות קטנות למובייל --- */
+
+        /* --- רק ה-CSS שנשאר זהה לקוד הקודם ופועל היטב --- */
+        header {background-color: #3f51b5; color: white; padding: 25px 0; text-align: center; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);}
+        header h1 {margin: 0; font-size: 2.5em;}
+        header p {margin: 5px 0 0; font-size: 1.1em;}
+        main {padding-top: 30px; padding-bottom: 50px;}
+        .lesson-module h2 {color: #303f9f; border-bottom: 2px solid #c5cae9; padding-bottom: 10px; margin-top: 0; font-size: 1.8em;}
+        .module-intro {font-size: 1.1em; color: #555; margin-bottom: 20px;}
+        hr {border: 0; border-top: 1px dashed #ccc; margin: 40px 0;}
+        .primary-btn, .secondary-btn {padding: 10px 18px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 1em; transition: background-color 0.3s, transform 0.1s;}
+        .primary-btn {background-color: #ffb300; color: #333; margin-left: 10px;}
+        .primary-btn:hover {background-color: #ff8f00; transform: translateY(-1px);}
+        .secondary-btn {background-color: #e0e0e0; color: #555;}
+        .secondary-btn:hover {background-color: #ccc;}
+        .vocab-grid-wrapper {padding: 5px 0; margin-bottom: 15px;}
+        .flashcard:hover {transform: translateY(-2px); background-color: #d8e1f5;}
+        .flashcard-hebrew {font-size: 16px; color: #555; transition: opacity 0.3s;}
+        .flashcard-hebrew.hidden {opacity: 0; height: 0; overflow: hidden;}
+        .match-card {background-color: #fce4ec; border: 2px solid #e91e63; border-radius: 8px; padding: 15px; text-align: center; font-weight: bold; cursor: pointer; min-height: 50px; display: flex; justify-content: center; align-items: center; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);}
+        .match-card.arabic {font-size: 24px; color: #e91e63;}
+        .match-card.hebrew {font-size: 18px; color: #d81b60;}
+        .match-card.selected {border-color: #ff9800; background-color: #fff3e0;}
+        .quiz-question {background-color: #e8f5e9; padding: 20px; border-radius: 8px; margin-bottom: 15px; border-left: 5px solid #4caf50;}
+        .option-label {display: block; background-color: #ffffff; padding: 10px; margin-bottom: 8px; border-radius: 4px; cursor: pointer; border: 1px solid #ccc;}
+        .vocab-summary-table {width: 100%; border-collapse: collapse; margin-top: 20px;}
+        .vocab-summary-table th, .vocab-summary-table td {border: 1px solid #ddd; padding: 12px; text-align: center; font-size: 1.1em;}
+        .vocab-summary-table th {background-color: #3f51b5; color: white; font-size: 1.2em;}
+        .summary-arabic {font-size: 24px; font-weight: bold; color: #d84315;}
+        footer {text-align: center; padding: 15px 0; background-color: #3f51b5; color: #c5cae9; font-size: 0.9em; margin-top: 30px;}
+        .hidden {display: none !important;}
+        
+        /* --- התאמות ספציפיות למסך קטן (Mobile-first approach) --- */
+        @media (max-width: 600px) {
+            header h1 {
+                font-size: 2em;
+            }
+            .lesson-module h2 {
+                font-size: 1.5em;
+            }
+            /* מאפשר לכרטיסייה אחת לתפוס כמעט את כל הרוחב בטלפון צר */
+            .vocab-grid {
+                grid-template-columns: repeat(auto-fit, minmax(45%, 1fr));
+            }
+            /* הכפתורים נערמים אחד מתחת לשני */
+            .controls {
+                flex-direction: column;
+            }
+            .primary-btn, .secondary-btn {
+                width: 100%;
+                margin: 5px 0;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="container">
+            <h1>🧠 מדרשת ערבית | תרגול אוצר מילים ממוקד</h1>
+            <p>הכנה מבוססת רק על המילים והשמות מהחומר הספציפי שלך.</p>
+        </div>
+    </header>
+
+    <main class="container">
+
+        <section id="vocab" class="lesson-module">
+            <h2>🔤 מודול 1: כרטיסיות שינון (24 מילים)</h2>
+            <p class="module-intro">לחץ על המילה כדי לחשוף את התרגום. התרגל ונסה לזכור את כל אוצר המילים.</p>
+            
+            <div class="controls">
+                <button id="toggleVocabBtn" class="primary-btn">הצג / הסתר הכל</button>
+                <button id="shuffleVocabBtn" class="secondary-btn">ערבב מילים</button>
+            </div>
+            
+            <div class="vocab-grid-wrapper">
+                <div id="vocab-list" class="vocab-grid">
+                    </div>
+            </div>
+        </section>
+
+        <hr>
+
+        <section id="matching-game" class="lesson-module">
+            <h2>🧩 מודול 2: מצא את 8 הזוגות הנכונים</h2>
+            <p class="module-intro">התאם בין המילה הערבית לתרגום העברי שלה. צריך למצוא 8 זוגות מתוך הרשימה!</p>
+            
+            <div id="match-game-area">
+                </div>
+            <div id="match-result"></div>
+        </section>
+
+        <hr>
+
+        <section id="quiz" class="lesson-module">
+            <h2>❓ מודול 3: חידון בזק (7 שאלות)</h2>
+            <p class="module-intro">בדוק את עצמך! בחר את התרגום הנכון למילה.</p>
+            <div id="quiz-area">
+                </div>
+            <button id="checkQuizBtn" class="primary-btn hidden">בדוק תשובות</button>
+            <div id="quiz-result" class="details-box hidden"></div>
+        </section>
+
+        <hr>
+
+        <section id="summary" class="lesson-module">
+            <h2>📝 מודול 4: סיכום מקיף (כל המילים)</h2>
+            <p class="module-intro">טבלה מסודרת של כל 24 המילים והשמות מהחומר שלך, ממוינת אלפביתית.</p>
+            <div id="summary-area">
+                </div>
+        </section>
+
+
+    </main>
+
+    <footer>
+        <p>&copy; 2025 מדרשת ערבית - למידה בהתאמה אישית</p>
+    </footer>
+
+    <script>
+        // --- קוד JavaScript ---
+        
+        // --- נתונים: 24 מילים ושמות מהעמודים שצולמו בלבד ---
+        const vocabData = [
+            { arabic: 'اِسْم', hebrew: 'שם' },
+            { arabic: 'وَلَد', hebrew: 'ילד' },
+            { arabic: 'أَنَا', hebrew: 'אני' },
+            { arabic: 'مُسْلِم', hebrew: 'מוסלמי' },
+            { arabic: 'دَوْلَة', hebrew: 'מדינה' },
+            { arabic: 'بُلْدَان', hebrew: 'מדינות (ר\')' },
+            { arabic: 'مُهِمَّة', hebrew: 'חשובה (נקבה)' },
+            { arabic: 'تِلْمِيذَة', hebrew: 'תלמידה' },
+            { arabic: 'أُمِّي', hebrew: 'אמא שלי' },
+            { arabic: 'أَبِي', hebrew: 'אבא שלי' },
+            { arabic: 'وَالِدَيْن', hebrew: 'הורים' },
+            { arabic: 'أَسْمَاء', hebrew: 'שמות (ר\')' },
+            { arabic: 'يُسَافِر', hebrew: 'נוסע (הוא)' },
+            { arabic: 'سَيَّارَة', hebrew: 'מכונית' },
+            { arabic: 'مَدِينَة', hebrew: 'עיר' },
+            { arabic: 'مُقَدَّسَة', hebrew: 'קדושה (נקבה)' },
+            { arabic: 'كَيْفَ', hebrew: 'איך' },
+            { arabic: 'اَلْقُدْس', hebrew: 'ירושלים' },
+            { arabic: 'لُبْنَان', hebrew: 'לבנון' },
+            { arabic: 'إِسْرَائِيل', hebrew: 'ישראל' },
+            { arabic: 'וِدَاد', hebrew: 'ודאד (שם)' },
+            { arabic: 'يُوسُف', hebrew: 'יוסף (שם)' },
+            { arabic: 'شَرِيف', hebrew: 'שריף (שם)' },
+            { arabic: 'مَرْيَم', hebrew: 'מרים (שם)' }
+        ];
+
+        let currentVocab = [...vocabData];
+
+        // --- פונקציות עזר כלליות ---
+
+        /**
+         * ערבוב מערך (אלגוריתם פישר-ייטס)
+         */
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+
+        // --- מודול 1: כרטיסיות (Flashcards) ---
+
+        /**
+         * מציג את אוצר המילים במקטע הכרטיסיות
+         */
+        function renderVocab(arr) {
+            const list = document.getElementById('vocab-list');
+            list.innerHTML = ''; 
+
+            arr.forEach(item => {
+                const itemHTML = `
+                    <div class="flashcard" onclick="this.querySelector('.flashcard-hebrew').classList.toggle('hidden')">
+                        <div class="flashcard-arabic">${item.arabic}</div>
+                        <div class="flashcard-hebrew hidden">${item.hebrew}</div>
+                    </div>
+                `;
+                list.innerHTML += itemHTML;
+            });
+            
+            // מוודאים שכפתור ההסתרה/הצגה מאופס
+            document.getElementById('toggleVocabBtn').textContent = 'הצג / הסתר הכל';
+        }
+
+        /**
+         * מחליף את מצב התרגום העברי לכל הכרטיסיות (גלוי/מוסתר)
+         */
+        function toggleAllVocabTranslations() {
+            const visibleTranslations = document.querySelectorAll('#vocab-list .flashcard .flashcard-hebrew');
+            const button = document.getElementById('toggleVocabBtn');
+            
+            if (visibleTranslations.length === 0) return;
+
+            const isHidden = visibleTranslations[0].classList.contains('hidden');
+            
+            visibleTranslations.forEach(t => {
+                t.classList.toggle('hidden', !isHidden);
+            });
+
+            button.textContent = isHidden ? 'הסתר הכל' : 'הצג הכל';
+        }
+
+        // --- מודול 2: משחק התאמה (Matching Game) ---
+        let selectedCards = [];
+        let matchesFound = 0;
+        const totalMatches = 8; // 8 זוגות להתאמה
+        let matchCards = [];
+
+        function initMatchingGame() {
+            const gameArea = document.getElementById('match-game-area');
+            const resultBox = document.getElementById('match-result');
+            gameArea.innerHTML = '';
+            resultBox.textContent = `מצא 0 מתוך ${totalMatches} זוגות.`;
+            selectedCards = [];
+            matchesFound = 0;
+
+            // 1. בוחרים 8 מילים אקראיות
+            let subset = [...vocabData];
+            shuffleArray(subset);
+            subset = subset.slice(0, totalMatches);
+
+            // 2. יוצרים את קלפי הערבית והעברית
+            matchCards = [];
+            subset.forEach(item => {
+                matchCards.push({ value: item.arabic, type: 'arabic', match: item.hebrew });
+                matchCards.push({ value: item.hebrew, type: 'hebrew', match: item.arabic });
+            });
+
+            // 3. מערבבים ומציגים
+            shuffleArray(matchCards);
+
+            matchCards.forEach((card, index) => {
+                const cardHTML = document.createElement('div');
+                cardHTML.classList.add('match-card', card.type);
+                cardHTML.textContent = card.value;
+                cardHTML.dataset.index = index;
+                cardHTML.dataset.match = card.match;
+                cardHTML.onclick = handleCardClick;
+                gameArea.appendChild(cardHTML);
+            });
+        }
+
+        function handleCardClick(event) {
+            const clickedCard = event.target;
+            
+            if (clickedCard.classList.contains('matched') || clickedCard.classList.contains('selected')) {
+                return;
+            }
+
+            clickedCard.classList.add('selected');
+            selectedCards.push(clickedCard);
+
+            if (selectedCards.length === 2) {
+                document.querySelectorAll('.match-card').forEach(card => card.onclick = null);
+
+                const card1 = selectedCards[0];
+                const card2 = selectedCards[1];
+
+                const isMatch = (card1.dataset.match === card2.textContent.trim()) &&
+                                (card2.dataset.match === card1.textContent.trim());
+
+                if (isMatch) {
+                    card1.classList.add('matched');
+                    card2.classList.add('matched');
+                    card1.classList.remove('selected');
+                    card2.classList.remove('selected');
+                    matchesFound++;
+                    document.getElementById('match-result').textContent = `מצאת ${matchesFound} מתוך ${totalMatches} זוגות! 👍`;
+                    
+                    if (matchesFound === totalMatches) {
+                        document.getElementById('match-result').textContent = 'כל הכבוד! סיימת את המשחק בהצלחה! 🥳';
+                    }
+
+                    selectedCards = [];
+                    document.querySelectorAll('.match-card').forEach(card => {
+                        if (!card.classList.contains('matched')) {
+                            card.onclick = handleCardClick;
+                        }
+                    });
+
+                } else {
+                    setTimeout(() => {
+                        card1.classList.remove('selected');
+                        card2.classList.remove('selected');
+                        selectedCards = [];
+                        document.querySelectorAll('.match-card').forEach(card => {
+                            if (!card.classList.contains('matched')) {
+                                card.onclick = handleCardClick;
+                            }
+                        });
+                    }, 800);
+                }
+            }
+        }
+
+
+        // --- מודול 3: חידון (Quiz) ---
+
+        /**
+         * יצירת חידון רב-ברירה (בחירת תרגום)
+         */
+        function generateQuiz() {
+            const quizArea = document.getElementById('quiz-area');
+            quizArea.innerHTML = ''; 
+            
+            // בוחרים 7 מילים אקראיות
+            let quizVocab = [...vocabData]; 
+            shuffleArray(quizVocab);
+            const selectedWords = quizVocab.slice(0, 7); 
+
+            selectedWords.forEach((correctAnswer, index) => {
+                const allTranslations = vocabData.map(v => v.hebrew);
+                
+                const incorrectOptions = allTranslations
+                    .filter(t => t !== correctAnswer.hebrew);
+
+                shuffleArray(incorrectOptions);
+                
+                // 4 אופציות (נכון + 3 לא נכונים)
+                const options = [correctAnswer.hebrew, ...incorrectOptions.slice(0, 3)];
+                shuffleArray(options); 
+
+                const qHTML = `
+                    <div class="quiz-question" data-question-id="${index}">
+                        <p>מה הפירוש של המילה: <span class="quiz-arabic-word">${correctAnswer.arabic}</span></p>
+                        ${options.map((opt, i) => `
+                            <label class="option-label">
+                                <input type="radio" name="q${index}" value="${opt}" data-correct="${opt === correctAnswer.hebrew ? 'true' : 'false'}"> 
+                                ${opt}
+                            </label>
+                        `).join('')}
+                    </div>
+                `;
+                quizArea.innerHTML += qHTML;
+            });
+            
+            document.getElementById('checkQuizBtn').classList.remove('hidden');
+        }
+
+        /**
+         * בדיקת תשובות החידון
+         */
+        function checkQuiz() {
+            const questions = document.querySelectorAll('.quiz-question');
+            const resultBox = document.getElementById('quiz-result');
+            let correctCount = 0;
+
+            questions.forEach(q => {
+                const selected = q.querySelector('input:checked');
+                const labels = q.querySelectorAll('.option-label');
+                
+                labels.forEach(l => {
+                    l.style.backgroundColor = 'white';
+                    l.style.border = '1px solid #ccc';
+                });
+
+                if (selected) {
+                    if (selected.dataset.correct === 'true') {
+                        correctCount++;
+                        selected.parentElement.style.backgroundColor = '#c8e6c9'; 
+                        selected.parentElement.style.border = '1px solid #4caf50';
+                    } else {
+                        selected.parentElement.style.backgroundColor = '#ffcdd2'; 
+                        selected.parentElement.style.border = '1px solid #f44336';
+                        const correctAnswer = q.querySelector('input[data-correct="true"]');
+                        if (correctAnswer) {
+                            correctAnswer.parentElement.style.border = '2px solid #4caf50';
+                        }
+                    }
+                }
+            });
+
+            resultBox.classList.remove('hidden');
+            resultBox.innerHTML = `
+                <h3>תוצאות החידון:</h3>
+                <p>צברת <strong>${correctCount}</strong> תשובות נכונות מתוך <strong>${questions.length}</strong> שאלות.</p>
+                <p>${correctCount === questions.length ? '🎉 ציון מושלם! אתה מוכן לבחינה.' : '💪 עוד קצת תרגול ותצליח! חזור על הכרטיסיות ונסה שוב.'}</p>
+            `;
+        }
+
+        // --- מודול 4: סיכום אוצר מילים ---
+        function renderVocabSummary() {
+            const summaryArea = document.getElementById('summary-area');
+            let tableHTML = `
+                <table class="vocab-summary-table">
+                    <thead>
+                        <tr>
+                            <th>מילה בערבית</th>
+                            <th>תרגום בעברית</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            const sortedVocab = [...vocabData].sort((a, b) => a.arabic.localeCompare(b.arabic, 'ar'));
+
+            sortedVocab.forEach(item => {
+                tableHTML += `
+                    <tr>
+                        <td class="summary-arabic">${item.arabic}</td>
+                        <td>${item.hebrew}</td>
+                    </tr>
+                `;
+            });
+
+            tableHTML += `
+                    </tbody>
+                </table>
+            `;
+            summaryArea.innerHTML = tableHTML;
+        }
+
+
+        // --- אירועי אתחול ---
+        window.onload = function() {
+            // מודול 1: כרטיסיות
+            renderVocab(currentVocab);
+            document.getElementById('toggleVocabBtn').addEventListener('click', toggleAllVocabTranslations);
+            document.getElementById('shuffleVocabBtn').addEventListener('click', () => {
+                shuffleArray(currentVocab);
+                renderVocab(currentVocab);
+            });
+            
+            // מודול 2: משחק התאמה
+            initMatchingGame();
+            
+            // מודול 3: חידון
+            generateQuiz();
+            document.getElementById('checkQuizBtn').addEventListener('click', checkQuiz);
+
+            // מודול 4: סיכום
+            renderVocabSummary();
+        };
+    </script>
+</body>
+</html>
