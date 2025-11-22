@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>הצייד והציפור - לימוד ערבית</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;700&family=Rubik:wght@400;500;700&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Rubik', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .font-arabic {
+            font-family: 'Noto Sans Arabic', sans-serif;
+        }
+        
+        /* 3D Flip Effect */
+        .perspective-1000 { perspective: 1000px; }
+        .transform-style-3d { transform-style: preserve-3d; }
+        .backface-hidden { backface-visibility: hidden; }
+        .rotate-y-180 { transform: rotateY(180deg); }
+        
+        /* Custom Scrollbar for Desktop */
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #f1f1f1; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #10b981; border-radius: 10px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #059669; }
+
+        /* Hide scrollbar for tabs on mobile but keep functionality */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in { animation: fadeIn 0.3s ease-out forwards; }
+        
+        .flip-card-inner {
+            transition: transform 0.5s;
+        }
+        .flipped .flip-card-inner {
+            transform: rotateY(180deg);
+        }
+
+        /* Mobile touch optimizations */
+        button {
+            touch-action: manipulation;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 min-h-screen flex flex-col">
+
+    <!-- Header -->
+    <header class="bg-white shadow-sm sticky top-0 z-20 border-b border-gray-100">
+        <div class="max-w-4xl mx-auto px-4 h-14 sm:h-16 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="bg-emerald-100 p-1.5 sm:p-2 rounded-lg">
+                    <i data-lucide="graduation-cap" class="text-emerald-600 w-5 h-5 sm:w-6 sm:h-6"></i>
+                </div>
+                <h1 class="text-lg sm:text-xl font-bold text-gray-800">הצייד והציפור</h1>
+            </div>
+            <div class="text-xs sm:text-sm text-gray-500 hidden xs:block">אוצר מילים ללימוד</div>
+        </div>
+    </header>
+
+    <!-- Navigation Tabs -->
+    <div class="bg-white border-b border-gray-200 sticky top-14 sm:top-16 z-10 shadow-sm">
+        <div class="max-w-4xl mx-auto px-2 sm:px-4 flex justify-between sm:justify-start gap-1 overflow-x-auto no-scrollbar">
+            <button onclick="switchTab('list')" id="tab-list" class="nav-tab flex-1 sm:flex-none justify-center active flex items-center gap-2 px-2 sm:px-4 py-3 sm:py-4 text-sm font-medium border-b-2 border-emerald-500 text-emerald-700 transition-colors whitespace-nowrap">
+                <i data-lucide="book-open" class="w-4 h-4"></i> <span class="sm:inline">מילון</span>
+            </button>
+            <button onclick="switchTab('cards')" id="tab-cards" class="nav-tab flex-1 sm:flex-none justify-center flex items-center gap-2 px-2 sm:px-4 py-3 sm:py-4 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 transition-colors whitespace-nowrap">
+                <i data-lucide="layout-grid" class="w-4 h-4"></i> <span class="sm:inline">כרטיסיות</span>
+            </button>
+            <button onclick="switchTab('quiz')" id="tab-quiz" class="nav-tab flex-1 sm:flex-none justify-center flex items-center gap-2 px-2 sm:px-4 py-3 sm:py-4 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 transition-colors whitespace-nowrap">
+                <i data-lucide="brain" class="w-4 h-4"></i> <span class="sm:inline">מבחן</span>
+            </button>
+            <button onclick="switchTab('match')" id="tab-match" class="nav-tab flex-1 sm:flex-none justify-center flex items-center gap-2 px-2 sm:px-4 py-3 sm:py-4 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 transition-colors whitespace-nowrap">
+                <i data-lucide="shuffle" class="w-4 h-4"></i> <span class="sm:inline">משחק</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Content Area -->
+    <main id="app-content" class="max-w-4xl mx-auto px-3 sm:px-4 py-6 flex-1 w-full overflow-x-hidden">
+        <!-- Content injected via JS -->
+    </main>
+
+    <!-- JavaScript Logic -->
+    <script>
+        // --- Data ---
+        const vocabularyData = [
+            { id: 1, arabic: 'عُصْفُور (ج) عَصَافِير', pronunciation: "'Usfur (pl. 'Asafir)", hebrew: 'ציפור', category: 'Nouns' },
+            { id: 2, arabic: 'صَيَّاد (ج) صَيَّادُون', pronunciation: "Sayyad (pl. Sayyadun)", hebrew: 'צייד', category: 'Nouns' },
+            { id: 3, arabic: 'نَصِيحَة (ج) نَصَائِح', pronunciation: "Nasiha (pl. Nasa'ih)", hebrew: 'עצה', category: 'Nouns' },
+            { id: 4, arabic: 'شَجَرَة (ج) أَشْجَار', pronunciation: "Shajara (pl. Ashjar)", hebrew: 'עץ', category: 'Nouns' },
+            { id: 5, arabic: 'بَطْن', pronunciation: "Batn", hebrew: 'בטן', category: 'Body' },
+            { id: 6, arabic: 'يَد', pronunciation: "Yad", hebrew: 'יד', category: 'Body' },
+            { id: 7, arabic: 'جَوْهَرَة', pronunciation: "Jawhara", hebrew: 'אבן יקרה / יהלום', category: 'Nouns' },
+            { id: 8, arabic: 'دَقِيقَة', pronunciation: "Daqiqa", hebrew: 'דקה', category: 'Time' },
+            { id: 9, arabic: 'ثَلَاث', pronunciation: "Thalath", hebrew: 'שלוש', category: 'Numbers' },
+            { id: 10, arabic: 'كُلّ', pronunciation: "Kull", hebrew: 'כל', category: 'General' },
+            { id: 11, arabic: 'قَلِيل', pronunciation: "Qalil", hebrew: 'מעט', category: 'General' },
+            { id: 12, arabic: 'جَمِيل', pronunciation: "Jamil", hebrew: 'יפה', category: 'Adjectives' },
+            { id: 13, arabic: 'بَعِيد (عَنْ)', pronunciation: "Ba'id ('an)", hebrew: 'רחוק (מ-)', category: 'Adjectives' },
+            { id: 14, arabic: 'أَوَّل', pronunciation: "Awwal", hebrew: 'ראשון', category: 'Adjectives' },
+            { id: 15, arabic: 'أُولَى', pronunciation: "Ula", hebrew: 'ראשונה', category: 'Adjectives' },
+            { id: 16, arabic: 'طَارَ', pronunciation: "Tara", hebrew: 'עף', category: 'Verbs' },
+            { id: 17, arabic: 'وَقَفَ', pronunciation: "Waqafa", hebrew: 'עמד', category: 'Verbs' },
+            { id: 18, arabic: 'وَقَعَ', pronunciation: "Waqa'a", hebrew: 'נפל', category: 'Verbs' },
+            { id: 19, arabic: 'كَسَرَ', pronunciation: "Kasara", hebrew: 'שבר', category: 'Verbs' },
+            { id: 20, arabic: 'بَدَأَ', pronunciation: "Bada'a", hebrew: 'התחיל', category: 'Verbs' },
+            { id: 21, arabic: 'فَعَلَ', pronunciation: "Fa'ala", hebrew: 'עשה', category: 'Verbs' },
+            { id: 22, arabic: 'صَعِدَ', pronunciation: "Sa'ida", hebrew: 'עלה', category: 'Verbs' },
+            { id: 23, arabic: 'ضَحِكَ', pronunciation: "Dahika", hebrew: 'צחק', category: 'Verbs' },
+            { id: 24, arabic: 'عَمِلَ', pronunciation: "Amila", hebrew: 'עבד', category: 'Verbs' },
+            { id: 25, arabic: 'أَسِفَ', pronunciation: "Asifa", hebrew: 'הצטער', category: 'Verbs' },
+            { id: 26, arabic: 'فَكَّرَ', pronunciation: "Fakkara", hebrew: 'חשב', category: 'Verbs' },
+            { id: 27, arabic: 'فَوْقَ', pronunciation: "Fawqa", hebrew: 'מעל', category: 'Prepositions' },
+            { id: 28, arabic: 'قَبْلَ', pronunciation: "Qabla", hebrew: 'לפני', category: 'Prepositions' },
+            { id: 29, arabic: 'بَعْدَ', pronunciation: "Ba'da", hebrew: 'אחרי', category: 'Prepositions' },
+            { id: 30, arabic: 'بَعْدَ قَلِيل', pronunciation: "Ba'da Qalil", hebrew: 'אחרי זמן קצר', category: 'Prepositions' }
+        ];
+
+        // --- State ---
+        let currentTab = 'list';
+        let flashcardIndex = 0;
+        let isCardFlipped = false;
+        
+        let quizIndex = 0;
+        let quizScore = 0;
+        let quizOptions = [];
+        let quizSelectedOption = null;
+        let isQuizFinished = false;
+        let shuffledQuizWords = [];
+
+        let matchCards = [];
+        let matchSelected = [];
+        let matchFound = [];
+        let matchScore = 0;
+        let isMatchOver = false;
+
+        // --- Helpers ---
+        function shuffleArray(array) {
+            const newArray = [...array];
+            for (let i = newArray.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+            }
+            return newArray;
+        }
+
+        function speak(text) {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel(); // Stop previous
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'ar-SA';
+                utterance.rate = 0.9; 
+                window.speechSynthesis.speak(utterance);
+            }
+        }
+
+        function switchTab(tabId) {
+            currentTab = tabId;
+            document.querySelectorAll('.nav-tab').forEach(btn => {
+                btn.classList.remove('border-emerald-500', 'text-emerald-700');
+                btn.classList.add('border-transparent', 'text-gray-500');
+            });
+            const activeBtn = document.getElementById(`tab-${tabId}`);
+            activeBtn.classList.remove('border-transparent', 'text-gray-500');
+            activeBtn.classList.add('border-emerald-500', 'text-emerald-700');
+
+            const contentDiv = document.getElementById('app-content');
+            contentDiv.innerHTML = '';
+            
+            if (tabId === 'list') renderDictionary();
+            else if (tabId === 'cards') renderFlashcards();
+            else if (tabId === 'quiz') initQuiz();
+            else if (tabId === 'match') initMatchGame();
+            
+            lucide.createIcons();
+            window.scrollTo(0, 0);
+        }
+
+        // --- Dictionary ---
+        function renderDictionary() {
+            const container = document.getElementById('app-content');
+            let html = `
+                <div class="animate-fade-in text-center mb-4 sm:mb-6">
+                    <h2 class="text-xl sm:text-2xl font-bold text-gray-800 mb-2">מילון המילים</h2>
+                    <p class="text-sm sm:text-base text-gray-600 mb-4 sm:mb-6">לחץ על הרמקול לשמיעת הגייה.</p>
+                    
+                    <div class="w-full max-w-2xl mx-auto bg-white rounded-xl sm:rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                        <div class="bg-emerald-50 p-3 sm:p-4 border-b border-emerald-100 flex justify-between items-center text-emerald-800 font-medium text-sm sm:text-base">
+                            <span class="w-1/2 text-right">ערבית</span>
+                            <span class="w-1/2 text-left">עברית</span>
+                        </div>
+                        <div class="divide-y divide-gray-100 max-h-[70vh] overflow-y-auto custom-scrollbar">
+            `;
+
+            vocabularyData.forEach(word => {
+                html += `
+                    <div class="flex justify-between items-center p-3 sm:p-4 hover:bg-gray-50 transition-colors">
+                        <div class="w-7/12 text-right flex items-start gap-2 sm:gap-3">
+                             <button onclick="speak('${word.arabic}')" class="flex-shrink-0 text-emerald-500 hover:text-emerald-700 bg-emerald-50 p-1.5 sm:p-2 rounded-full transition-colors mt-1 active:scale-90">
+                                <i data-lucide="volume-2" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i>
+                             </button>
+                             <div class="min-w-0">
+                                <div class="text-xs sm:text-sm text-emerald-600 font-medium mb-0.5 font-sans truncate">${word.pronunciation}</div>
+                                <div class="text-lg sm:text-xl font-bold font-arabic text-gray-800 break-words leading-tight">${word.arabic}</div>
+                             </div>
+                        </div>
+                        <span class="w-5/12 text-left text-base sm:text-lg text-gray-600 pl-1">${word.hebrew}</span>
+                    </div>
+                `;
+            });
+
+            html += `</div></div></div>`;
+            container.innerHTML = html;
+        }
+
+        // --- Flashcards ---
+        function renderFlashcards() {
+            const container = document.getElementById('app-content');
+            const word = vocabularyData[flashcardIndex];
+            const displayIndex = flashcardIndex + 1;
+            const total = vocabularyData.length;
+
+            const html = `
+                <div class="animate-fade-in flex flex-col items-center justify-center w-full max-w-md mx-auto p-2 sm:p-4">
+                    <h2 class="text-xl sm:text-2xl font-bold text-gray-800 mb-1">כרטיסיות זיכרון</h2>
+                    <div class="mb-4 text-sm text-gray-600 font-medium">
+                        כרטיס ${displayIndex} מתוך ${total}
+                    </div>
+                    
+                    <div class="relative w-full h-60 sm:h-64 perspective-1000 cursor-pointer group select-none ${isCardFlipped ? 'flipped' : ''}" onclick="toggleFlip()">
+                        <div class="flip-card-inner relative w-full h-full transform-style-3d shadow-xl rounded-2xl">
+                            
+                            <!-- Front (Arabic) -->
+                            <div class="absolute w-full h-full backface-hidden bg-gradient-to-br from-emerald-500 to-teal-600 text-white rounded-2xl flex flex-col items-center justify-center p-4 sm:p-6 text-center">
+                                <button onclick="event.stopPropagation(); speak('${word.arabic}')" class="absolute top-3 right-3 sm:top-4 sm:right-4 p-2 bg-white/20 hover:bg-white/30 active:bg-white/40 rounded-full transition-colors z-10">
+                                    <i data-lucide="volume-2" class="w-5 h-5 sm:w-6 sm:h-6 text-white"></i>
+                                </button>
+                                <div class="text-xs uppercase tracking-wider opacity-75 mb-1">ערבית</div>
+                                <div class="text-base sm:text-lg font-medium text-emerald-100 mb-2">${word.pronunciation}</div>
+                                <div class="text-3xl sm:text-4xl font-bold font-arabic leading-normal">${word.arabic}</div>
+                                <div class="mt-6 sm:mt-8 text-xs opacity-60">לחץ כדי להפוך</div>
+                            </div>
+
+                            <!-- Back (Hebrew) -->
+                            <div class="absolute w-full h-full backface-hidden bg-white text-gray-800 rounded-2xl flex flex-col items-center justify-center p-4 sm:p-6 rotate-y-180 border-2 border-emerald-100 text-center">
+                                <div class="text-xs sm:text-sm uppercase tracking-wider text-emerald-600 mb-2">עברית</div>
+                                <div class="text-3xl sm:text-4xl font-bold">${word.hebrew}</div>
+                                <div class="mt-2 text-xs sm:text-sm text-gray-400">${word.category}</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-4 mt-6 sm:mt-8 w-full justify-center">
+                        <button onclick="prevCard()" class="p-3 sm:p-4 rounded-full bg-white shadow-md hover:bg-emerald-50 active:bg-emerald-100 text-emerald-600 transition-colors">
+                            <i data-lucide="arrow-right" class="w-6 h-6"></i>
+                        </button>
+                        <button onclick="toggleFlip()" class="flex-1 max-w-[160px] px-4 py-3 rounded-full bg-emerald-600 text-white font-medium shadow-md hover:bg-emerald-700 active:bg-emerald-800 transition-colors text-sm sm:text-base">
+                            ${isCardFlipped ? 'הצג ערבית' : 'הצג עברית'}
+                        </button>
+                        <button onclick="nextCard()" class="p-3 sm:p-4 rounded-full bg-white shadow-md hover:bg-emerald-50 active:bg-emerald-100 text-emerald-600 transition-colors">
+                            <i data-lucide="arrow-left" class="w-6 h-6"></i>
+                        </button>
+                    </div>
+                </div>
+            `;
+            container.innerHTML = html;
+            lucide.createIcons();
+        }
+
+        function toggleFlip() {
+            isCardFlipped = !isCardFlipped;
+            renderFlashcards();
+        }
+
+        function nextCard() {
+            isCardFlipped = false;
+            flashcardIndex = (flashcardIndex + 1) % vocabularyData.length;
+            renderFlashcards();
+        }
+
+        function prevCard() {
+            isCardFlipped = false;
+            flashcardIndex = (flashcardIndex - 1 + vocabularyData.length) % vocabularyData.length;
+            renderFlashcards();
+        }
+
+        // --- Quiz ---
+        function initQuiz() {
+            shuffledQuizWords = shuffleArray([...vocabularyData]);
+            quizIndex = 0;
+            quizScore = 0;
+            isQuizFinished = false;
+            generateQuizQuestion();
+        }
+
+        function generateQuizQuestion() {
+            if (quizIndex >= shuffledQuizWords.length) {
+                isQuizFinished = true;
+                renderQuiz();
+                return;
+            }
+            const currentWord = shuffledQuizWords[quizIndex];
+            const others = shuffledQuizWords.filter(w => w.id !== currentWord.id);
+            const randomOthers = shuffleArray(others).slice(0, 3);
+            quizOptions = shuffleArray([currentWord, ...randomOthers]);
+            quizSelectedOption = null;
+            renderQuiz();
+        }
+
+        function handleQuizOptionClick(optionId) {
+            if (quizSelectedOption !== null) return;
+            quizSelectedOption = optionId;
+            if (optionId === shuffledQuizWords[quizIndex].id) quizScore++;
+            renderQuiz();
+            setTimeout(() => {
+                quizIndex++;
+                generateQuizQuestion();
+            }, 1500);
+        }
+
+        function renderQuiz() {
+            const container = document.getElementById('app-content');
+
+            if (isQuizFinished) {
+                container.innerHTML = `
+                    <div class="animate-fade-in flex flex-col items-center justify-center p-6 sm:p-8 bg-white rounded-2xl shadow-lg max-w-md mx-auto text-center mt-4">
+                        <i data-lucide="trophy" class="w-16 h-16 sm:w-20 sm:h-20 text-yellow-500 mb-4"></i>
+                        <h2 class="text-2xl font-bold mb-2 text-gray-800">כל הכבוד!</h2>
+                        <p class="text-lg mb-6 text-gray-600">הציון שלך: ${quizScore} מתוך ${vocabularyData.length}</p>
+                        <button onclick="initQuiz()" class="flex items-center gap-2 px-6 py-3 bg-emerald-600 text-white rounded-full hover:bg-emerald-700 active:bg-emerald-800 transition-colors font-bold shadow-md w-full justify-center sm:w-auto">
+                            <i data-lucide="rotate-ccw" class="w-5 h-5"></i> נסה שוב
+                        </button>
+                    </div>
+                `;
+                lucide.createIcons();
+                return;
+            }
+
+            const currentWord = shuffledQuizWords[quizIndex];
+            const progress = ((quizIndex) / shuffledQuizWords.length) * 100;
+            
+            let optionsHtml = '';
+            quizOptions.forEach(option => {
+                let btnClass = "bg-white border-2 border-gray-100 text-gray-700 active:scale-[0.98]";
+                let icon = '';
+
+                if (quizSelectedOption !== null) {
+                    if (option.id === currentWord.id) {
+                        btnClass = "bg-green-100 border-green-500 text-green-800 scale-[1]";
+                        icon = `<i data-lucide="check" class="text-green-600 w-5 h-5"></i>`;
+                    } else if (option.id === quizSelectedOption) {
+                        btnClass = "bg-red-100 border-red-500 text-red-800 scale-[1]";
+                        icon = `<i data-lucide="x" class="text-red-600 w-5 h-5"></i>`;
+                    } else {
+                        btnClass = "bg-gray-50 opacity-50 scale-[1]";
+                    }
+                }
+
+                optionsHtml += `
+                    <button onclick="handleQuizOptionClick(${option.id})" class="p-3 sm:p-4 rounded-xl text-base sm:text-lg font-medium transition-all duration-200 flex items-center justify-between shadow-sm mb-3 w-full ${btnClass}" ${quizSelectedOption !== null ? 'disabled' : ''}>
+                        <span class="w-full text-center">${option.hebrew}</span>
+                        ${icon}
+                    </button>
+                `;
+            });
+
+            container.innerHTML = `
+                <div class="animate-fade-in w-full max-w-md mx-auto p-2 sm:p-4">
+                    <div class="w-full bg-gray-200 rounded-full h-2.5 mb-6">
+                        <div class="bg-emerald-600 h-2.5 rounded-full transition-all duration-300" style="width: ${progress}%"></div>
+                    </div>
+
+                    <div class="bg-white rounded-2xl shadow-lg p-5 sm:p-6 mb-6 text-center border-b-4 border-emerald-100 relative">
+                        <button onclick="speak('${currentWord.arabic}')" class="absolute top-3 right-3 text-emerald-400 hover:text-emerald-600 p-2 -mr-2 -mt-2">
+                            <i data-lucide="volume-2" class="w-5 h-5 sm:w-6 sm:h-6"></i>
+                        </button>
+                        <span class="text-xs sm:text-sm text-gray-500 uppercase tracking-wide">מה התרגום של:</span>
+                        <div class="text-base sm:text-lg font-medium text-emerald-600 mt-1 font-sans">${currentWord.pronunciation}</div>
+                        <h2 class="text-3xl sm:text-4xl font-bold mt-2 mb-2 text-emerald-800 font-arabic leading-normal">${currentWord.arabic}</h2>
+                    </div>
+
+                    <div class="flex flex-col w-full">
+                        ${optionsHtml}
+                    </div>
+                </div>
+            `;
+            lucide.createIcons();
+        }
+
+        // --- Match Game ---
+        function initMatchGame() {
+            const gameSet = shuffleArray(vocabularyData).slice(0, 6);
+            const cards = [
+                ...gameSet.map(w => ({ id: w.id, content: w.arabic, pronunciation: w.pronunciation, type: 'arabic', originalId: w.id })),
+                ...gameSet.map(w => ({ id: `heb-${w.id}`, content: w.hebrew, type: 'hebrew', originalId: w.id }))
+            ];
+            matchCards = shuffleArray(cards);
+            matchSelected = [];
+            matchFound = [];
+            matchScore = 0;
+            isMatchOver = false;
+            renderMatchGame();
+        }
+
+        function handleMatchCardClick(cardIndex) {
+            const card = matchCards[cardIndex];
+            if (matchSelected.length === 2 || matchFound.includes(card.originalId) || matchSelected.find(c => c.uniqueIndex === cardIndex)) return;
+
+            if (card.type === 'arabic') speak(card.content);
+            matchSelected.push({ ...card, uniqueIndex: cardIndex });
+            renderMatchGame();
+
+            if (matchSelected.length === 2) {
+                const [first, second] = matchSelected;
+                if (first.originalId === second.originalId) {
+                    matchFound.push(first.originalId);
+                    matchScore++;
+                    matchSelected = [];
+                    if (matchFound.length === 6) setTimeout(() => { isMatchOver = true; renderMatchGame(); }, 500);
+                    else renderMatchGame();
+                } else {
+                    setTimeout(() => { matchSelected = []; renderMatchGame(); }, 1000);
+                }
+            }
+        }
+
+        function renderMatchGame() {
+            const container = document.getElementById('app-content');
+
+            if (isMatchOver) {
+                container.innerHTML = `
+                    <div class="animate-fade-in text-center py-12 bg-white rounded-xl shadow-md max-w-2xl mx-auto mt-4">
+                        <i data-lucide="trophy" class="w-16 h-16 text-yellow-500 mx-auto mb-4"></i>
+                        <h3 class="text-2xl font-bold text-gray-800 mb-2">סיימת את המשחק!</h3>
+                        <button onclick="initMatchGame()" class="mt-4 px-8 py-3 bg-emerald-600 text-white rounded-full font-medium hover:bg-emerald-700 transition-colors shadow-md">שחק שוב</button>
+                    </div>
+                `;
+                lucide.createIcons();
+                return;
+            }
+
+            let gridHtml = '';
+            matchCards.forEach((card, index) => {
+                const isSelected = matchSelected.find(c => c.uniqueIndex === index);
+                const isMatched = matchFound.includes(card.originalId);
+                let cardStyle = "bg-white border-gray-200 text-gray-700 hover:border-emerald-300 active:bg-emerald-50";
+                if (isSelected) cardStyle = "bg-blue-50 border-blue-500 text-blue-900 ring-2 ring-blue-200 transform scale-[0.98]";
+                if (isMatched) cardStyle = "bg-emerald-50 border-emerald-500 text-emerald-900 opacity-50 cursor-default";
+
+                let content = card.type === 'arabic' ? 
+                    `<div class="flex flex-col items-center w-full overflow-hidden"><span class="text-[10px] text-gray-500 font-sans truncate max-w-full">${card.pronunciation}</span><span class="font-bold font-arabic text-base sm:text-lg leading-tight">${card.content}</span></div>` 
+                    : `<span class="text-sm sm:text-base leading-tight">${card.content}</span>`;
+
+                gridHtml += `
+                    <button onclick="handleMatchCardClick(${index})" class="h-20 sm:h-24 p-1 sm:p-2 rounded-lg border-2 flex items-center justify-center text-center transition-all duration-200 shadow-sm font-medium ${cardStyle}" ${isMatched ? 'disabled' : ''}>
+                        ${content}
+                    </button>
+                `;
+            });
+
+            container.innerHTML = `
+                <div class="animate-fade-in max-w-2xl mx-auto">
+                    <div class="flex justify-between items-center mb-4">
+                        <div class="text-emerald-800 font-bold text-sm sm:text-base">התאמות: ${matchScore}/6</div>
+                        <button onclick="initMatchGame()" class="flex items-center gap-2 text-xs sm:text-sm text-emerald-600 hover:text-emerald-800 bg-emerald-50 px-3 py-1.5 rounded-full">
+                            <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i> ערבב מחדש
+                        </button>
+                    </div>
+                    <div class="grid grid-cols-3 sm:grid-cols-4 gap-2 sm:gap-3">
+                        ${gridHtml}
+                    </div>
+                </div>
+            `;
+            lucide.createIcons();
+        }
+
+        // --- Init ---
+        switchTab('list');
+    </script>
+</body>
+</html>
